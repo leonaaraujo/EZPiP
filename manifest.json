@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Easy PiP",
+  "description": "A tool to easily put the website videos in picture-and-picture",
+  "version": "0.0.1",
+  "action": {
+    "default_popup": "src/index.html",
+    "default_icon": "src/resources/easy-pip.png"
+  },
+  "permissions": ["activeTab"],
+  "background": {
+    "service_worker": "src/scripts/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/scripts/content.js"
+      ]
+    }
+  ]
+}
