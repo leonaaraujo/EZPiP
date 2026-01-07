@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "EZPiP",
-  "description": "A tool to easily put the website videos in picture-and-picture.",
+  "description": "A browser extension to easily put the tab videos in picture-and-picture.",
   "version": "0.0.1",
   "action": {
     "default_popup": "src/index.html",
