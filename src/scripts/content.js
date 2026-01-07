@@ -1,15 +1,29 @@
+function captureVideoFrame(videoElement, format = 'image/png', quality = 0.92) {
+  const canvas = document.createElement('canvas');
+  canvas.width = videoElement.videoWidth;
+  canvas.height = videoElement.videoHeight;
+
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+  return canvas.toDataURL(format, quality);
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request?.message === 'easypip:get_videos') {
+  if (request?.message === 'ezpip:get_videos') {
     const videos = document.querySelectorAll('video');
 
     if (videos) {
       const response = { videos: [] };
       videos.forEach((video, index) => {
-        if (typeof video.duration === 'number') {
+        const thumbnail = captureVideoFrame(video);
+
+        if (typeof video.duration === 'number' && thumbnail !== 'data:,') {
           response.videos.push({
             index,
             src: video.src || video.currentSrc,
             active: document.pictureInPictureElement === video,
+            thumbnail,
           });
         };
       });
@@ -17,7 +31,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   }
 
-  if (request?.message === 'easypip:request_pip') {
+  if (request?.message === 'ezpip:request_pip') {
     const videos = document.querySelectorAll('video');
     const index = parseInt(request.index);
 

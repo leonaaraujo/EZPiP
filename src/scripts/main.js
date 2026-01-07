@@ -7,17 +7,23 @@ const showVideosList = (videos) => {
 
   videos.forEach((video) => {
     const item = document.createElement('li');
-    const itemButton = document.createElement('button');
+    item.classList.add('valid');
 
-    itemButton.onclick = () => {
+    const thumbnail = document.createElement('img');
+    thumbnail.src = video.thumbnail;
+
+    const itemText = document.createElement('p');
+
+    item.onclick = () => {
       chrome.tabs.sendMessage(TAB_INFO.tabId, {
         ...video,
-        message: 'easypip:request_pip',
+        message: 'ezpip:request_pip',
       });
     };
-    itemButton.innerHTML = `Video ${video.index}`;
+    itemText.innerHTML = `Video ${video.index}`;
 
-    item.appendChild(itemButton);
+    item.appendChild(thumbnail);
+    item.appendChild(itemText);
     videosList.appendChild(item);
   });
 };
@@ -35,6 +41,12 @@ const showEmptyMessage = () => {
 
 const consoleLog = (msg) => {
   const errorEl = document.querySelector('.console');
+
+  if (msg.trim() === 'undefined' || msg.trim() === 'null') {
+    errorEl.innerHTML = '';
+    return;
+  }
+
   errorEl.innerHTML = msg;
 };
 
@@ -48,8 +60,8 @@ window.addEventListener('DOMContentLoaded', () => {
       try {
         TAB_INFO.tabId = tabs[0].id;
 
-        const {videos} = await chrome.tabs.sendMessage(TAB_INFO.tabId, {
-          message: 'easypip:get_videos',
+        const { videos } = await chrome.tabs.sendMessage(TAB_INFO.tabId, {
+          message: 'ezpip:get_videos',
         });
 
         if (videos) {
@@ -60,7 +72,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
       } catch (err) {
         showEmptyMessage();
-        consoleLog(err);
+        consoleLog(err.toString());
       }
     }
   );
