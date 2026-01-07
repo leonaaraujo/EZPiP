@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "easy-pip",
+  "name": "ezpip",
   "scripts": {},
   "volta": {
     "node": "20.12.0",
