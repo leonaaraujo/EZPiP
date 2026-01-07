@@ -88,6 +88,8 @@ ul {
     text-align: left;
     padding-right: 10px;
     font-size: 0.7rem;
+    width: 100%;
+    margin-left: 10px;
 }
 
 .videos-list *:not(.valid) p {
