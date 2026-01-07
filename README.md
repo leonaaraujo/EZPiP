@@ -1,11 +1,11 @@
-<center>
-    <img src="./src/resources/ezpip-logo.png" width="100px" />
-    <h1>EZPiP Chrome Extension Official Repository</h1>
-    <img src=" https://img.shields.io/github/package-json/v/leonaaraujo/ezpip" />
-</center>
+<div align="center">
+    <img src="./src/resources/ezpip-logo.png" width="100px" alt="EZPiP Logo" />
+    <h1>EZPiP Browser Extension</h1>
+    <img src="https://img.shields.io/github/v/release/leonaaraujo/ezpip" />
+    <p>A browser extension to easily put the tab videos in picture-and-picture.</p>
+</div>
 
-A tool to easily put the website videos in picture-and-picture.
 
 ## How to use?
 ![EZPiP Screenshot](./src/resources/printscreen.png)  
-Just click over the extension icon to list all tab active videos and choose one to be PiP.
+Click on the extension icon to view all active tab videos and select one to be PiP.
