@@ -3,11 +3,11 @@ const TAB_INFO = {
 };
 
 const showVideosList = (videos) => {
-  const videosList = document.querySelector('.videos-list');
+  const videosList = document.querySelector('.main__videos-list');
 
   videos.forEach((video) => {
     const item = document.createElement('li');
-    item.classList.add('valid');
+    item.classList.add('main__videos-list__valid');
 
     const thumbnail = document.createElement('img');
     thumbnail.src = video.thumbnail;
@@ -29,8 +29,11 @@ const showVideosList = (videos) => {
 };
 
 const showEmptyMessage = () => {
-  const videosList = document.querySelector('.videos-list');
+  const videosList = document.querySelector('.main__videos-list');
+
   const item = document.createElement('li');
+  item.classList.add('main__videos-list__invalid');
+
   const msg = document.createElement('p');
 
   msg.innerHTML = 'No video available in this tab.';
@@ -40,7 +43,7 @@ const showEmptyMessage = () => {
 }
 
 const consoleLog = (msg) => {
-  const errorEl = document.querySelector('.console');
+  const errorEl = document.querySelector('.footer__console');
 
   if (msg.trim() === 'undefined' || msg.trim() === 'null') {
     errorEl.innerHTML = '';
