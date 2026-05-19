@@ -9,6 +9,33 @@ function captureVideoFrame(videoElement, format = 'image/png', quality = 0.92) {
   return canvas.toDataURL(format, quality);
 }
 
+function resolveVideoLabel(video) {
+  if (video.title && video.title !== 'undefined') {
+    return video.title;
+  }
+
+  const ariaLabel = video.getAttribute('aria-label');
+  if (ariaLabel && ariaLabel !== 'undefined') {
+    return ariaLabel;
+  }
+
+  const src = video.src || video.currentSrc;
+  if (src) {
+    try {
+      const url = new URL(src);
+      const filename = url.pathname.split('/').pop();
+      if (filename) {
+        const label = decodeURIComponent(filename);
+        if (label && label !== 'undefined') {
+          return label;
+        }
+      }
+    } catch (_) { }
+  }
+
+  return `Video ${video.index}`;
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request?.message === 'ezpip:get_videos') {
     const videos = document.querySelectorAll('video');
@@ -22,6 +49,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           response.videos.push({
             index,
             src: video.src || video.currentSrc,
+            label: resolveVideoLabel(video),
             active: document.pictureInPictureElement === video,
             thumbnail,
           });

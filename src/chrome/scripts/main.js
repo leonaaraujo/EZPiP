@@ -11,8 +11,13 @@ const showVideosList = (videos) => {
 
     const thumbnail = document.createElement('img');
     thumbnail.src = video.thumbnail;
+    item.appendChild(thumbnail);
 
     const itemText = document.createElement('p');
+    itemText.innerHTML = `Video ${video.index}<br/><i>${video.label.slice(0, 7)}...</i>`;
+    itemText.setAttribute('aria-label', video.label);
+    itemText.setAttribute('title', video.label);
+    item.appendChild(itemText);
 
     item.onclick = () => {
       chrome.tabs.sendMessage(TAB_INFO.tabId, {
@@ -20,10 +25,7 @@ const showVideosList = (videos) => {
         message: 'ezpip:request_pip',
       });
     };
-    itemText.innerHTML = `Video ${video.index}`;
 
-    item.appendChild(thumbnail);
-    item.appendChild(itemText);
     videosList.appendChild(item);
   });
 };
