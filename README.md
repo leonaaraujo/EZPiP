@@ -3,6 +3,7 @@
     <h1>EZPiP Browser Extension</h1>
     <img src="https://img.shields.io/github/v/release/leonaaraujo/ezpip" />
     <p>A browser extension to easily put the tab videos in picture-and-picture.</p>
+    <a href="https://chromewebstore.google.com/detail/hdifdjilbddccjgpbbbanfjfndjbjclb?utm_source=item-share-cb" target="_blank" style="text-decoration: none;">Chrome Web Store ✨</a>
 </div>
 
 
