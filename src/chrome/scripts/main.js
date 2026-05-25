@@ -20,9 +20,10 @@ const showVideosList = (videos) => {
     item.appendChild(itemText);
 
     item.onclick = () => {
-      chrome.tabs.sendMessage(TAB_INFO.tabId, {
-        ...video,
-        message: 'ezpip:request_pip',
+      chrome.scripting.executeScript({
+        target: { tabId: TAB_INFO.tabId },
+        func: togglePiP,
+        args: [video.index],
       });
     };
 
@@ -63,17 +64,20 @@ window.addEventListener('DOMContentLoaded', () => {
     },
     async (tabs) => {
       try {
-        TAB_INFO.tabId = tabs[0].id;
+        const tabId = tabs[0].id;
+        TAB_INFO.tabId = tabId;
 
-        const { videos } = await chrome.tabs.sendMessage(TAB_INFO.tabId, {
-          message: 'ezpip:get_videos',
+        const results = await chrome.scripting.executeScript({
+          target: { tabId },
+          func: scanForVideos,
         });
 
-        if (videos) {
+        const videos = results?.[0]?.result;
+
+        if (videos && videos.length > 0) {
           showVideosList(videos);
         } else {
           showEmptyMessage();
-          consoleLog();
         }
       } catch (err) {
         showEmptyMessage();
@@ -82,3 +86,79 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   );
 });
+
+function scanForVideos() {
+  const videos = document.querySelectorAll('video');
+
+  return Array.from(videos)
+    .map((video, index) => {
+      const thumbnail = captureVideoFrame(video);
+
+      if (typeof video.duration === 'number' && thumbnail !== 'data:,') {
+        return {
+          index,
+          src: video.src || video.currentSrc,
+          label: resolveVideoLabel(video, index),
+          active: document.pictureInPictureElement === video,
+          thumbnail,
+        };
+      }
+
+      return null;
+    })
+    .filter(Boolean);
+
+  function captureVideoFrame(videoElement, format = 'image/png', quality = 0.92) {
+    const canvas = document.createElement('canvas');
+    canvas.width = videoElement.videoWidth;
+    canvas.height = videoElement.videoHeight;
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+    return canvas.toDataURL(format, quality);
+  }
+
+  function resolveVideoLabel(video, index) {
+    if (video.title && video.title !== 'undefined') {
+      return video.title;
+    }
+
+    const ariaLabel = video.getAttribute('aria-label');
+    if (ariaLabel && ariaLabel !== 'undefined') {
+      return ariaLabel;
+    }
+
+    const src = video.src || video.currentSrc;
+    if (src) {
+      try {
+        const url = new URL(src);
+        const filename = url.pathname.split('/').pop();
+        if (filename) {
+          const label = decodeURIComponent(filename);
+          if (label && label !== 'undefined') {
+            return label;
+          }
+        }
+      } catch (_) { }
+    }
+
+    return `Video ${index}`;
+  }
+}
+
+function togglePiP(index) {
+  const videos = document.querySelectorAll('video');
+
+  if (videos && videos.length > index) {
+    const el = videos[index];
+    const active = document.pictureInPictureElement === el;
+
+    if (active) {
+      document.exitPictureInPicture();
+    } else {
+      el.disablePictureInPicture = false;
+      el.requestPictureInPicture();
+    }
+  }
+}
